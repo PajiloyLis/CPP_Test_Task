@@ -11,6 +11,7 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Network
         REQUIRED)
 
 add_executable(server main.cpp
@@ -25,11 +26,22 @@ add_executable(server main.cpp
         domainModels/Measurements.h
         domainModels/Severity.h
         controller/ServerController/ServerController.cpp
-        controller/ServerController/ServerController.h)
+        controller/ServerController/ServerController.h
+        protocolModels/Incoming.h
+        protocolModels/Outcoming.h
+        protocolModels/packetCodec/PacketCodec.cpp
+        protocolModels/packetCodec/PacketCodec.h
+        protocolModels/lineBuffer/LineBuffer.cpp
+        protocolModels/lineBuffer/LineBuffer.h
+        network/clientSession/ClientSession.cpp
+        network/clientSession/ClientSession.h
+        network/serverWorker/ServerWorker.cpp
+        network/serverWorker/ServerWorker.h)
 target_link_libraries(server
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::Network
 )
 
 target_include_directories(server PRIVATE

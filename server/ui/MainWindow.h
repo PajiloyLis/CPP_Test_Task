@@ -4,6 +4,7 @@
 
 #include "ui/ui_MainWindow.h"
 #include "controller/IServerController.h"
+#include "protocolModels/Incoming.h"
 
 #include <QDateTime>
 #include <QDebug>

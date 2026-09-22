@@ -1,5 +1,5 @@
 #include "ServerController.h"
-// #include "network/ServerWorker.h"
+#include "network/serverWorker/ServerWorker.h"
 
 #include <QMetaObject>
 #include <QThread>

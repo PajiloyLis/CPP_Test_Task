@@ -66,23 +66,23 @@ void MainWindow::connectToController() {
         return;
     }
 
-    connect(controller_, &ServerController::serverStarted,
+    connect(controller_, &IServerController::serverStarted,
             this, &MainWindow::onServerStarted);
-    connect(controller_, &ServerController::serverStopped,
+    connect(controller_, &IServerController::serverStopped,
             this, &MainWindow::onServerStopped);
-    connect(controller_, &ServerController::fatalError,
+    connect(controller_, &IServerController::fatalError,
             this, &MainWindow::onFatalError);
 
-    connect(controller_, &ServerController::clientConnected,
+    connect(controller_, &IServerController::clientConnected,
             this, &MainWindow::onClientConnected);
-    connect(controller_, &ServerController::clientDisconnected,
+    connect(controller_, &IServerController::clientDisconnected,
             this, &MainWindow::onClientDisconnected);
-    connect(controller_, &ServerController::clientStatusChanged,
+    connect(controller_, &IServerController::clientStatusChanged,
             this, &MainWindow::onClientStatusChanged);
 
-    connect(controller_, &ServerController::packetReceived,
+    connect(controller_, &IServerController::packetReceived,
             this, &MainWindow::onPacketReceived);
-    connect(controller_, &ServerController::logMessage,
+    connect(controller_, &IServerController::logMessage,
             this, &MainWindow::onLogMessage);
 }
 
@@ -211,7 +211,7 @@ void MainWindow::onPacketReceived(IncomingPacket packet) {
         ui_->tableData->setItem(row, col, new QTableWidgetItem(text));
     };
     set(0, QString::number(packet.clientId));
-    set(1, PacketCodec::dataTypeToString(packet.type));
+    set(1, PacketCodec::dataTypeToString(packet.payload.type));
     set(2, packet.summary);
     set(3, packet.receivedAt.toString(Qt::ISODate));
 
