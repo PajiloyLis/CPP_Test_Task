@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "ui/ui_MainWindow.h"
 
 MainWindow::MainWindow(IServerController *controller, QWidget *parent)
     : QMainWindow(parent),

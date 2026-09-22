@@ -1,6 +1,8 @@
 #ifndef SERVER_SEVERITY_H
 #define SERVER_SEVERITY_H
 
+#include <QString>
+
 enum class Severity {
     Info,
     Warning,

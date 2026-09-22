@@ -6,6 +6,7 @@
 #include "domainModels/ClientId.h"
 #include "domainModels/ClientInfo.h"
 #include "domainModels/Thresholds.h"
+#include "protocolModels/Incoming.h"
 
 class IServerController : public QObject {
     Q_OBJECT

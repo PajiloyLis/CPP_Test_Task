@@ -1,15 +1,11 @@
 #ifndef TEST_TASK_CPP_MAINWINDOW_H
 #define TEST_TASK_CPP_MAINWINDOW_H
 
-
-#include "ui/ui_MainWindow.h"
 #include "controller/IServerController.h"
 #include "protocolModels/Incoming.h"
+#include "protocolModels/packetCodec/PacketCodec.h"
 
 #include <QDateTime>
-#include <QDebug>
-#include <QHeaderView>
-#include <QMessageBox>
 #include <QTableWidgetItem>
 #include <QMainWindow>
 #include <QHash>

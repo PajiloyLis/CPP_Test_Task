@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QString>
+#include <QMetaType>
 
 #include "domainModels/ClientId.h"
 #include "domainModels/ClientStatus.h"
@@ -14,5 +15,7 @@ struct ClientInfo {
     ClientStatus status = ClientStatus::Disconnected;
     QDateTime connectedAt;
 };
+
+Q_DECLARE_METATYPE(ClientInfo)
 
 #endif //SERVER_CLIENTINFO_H
