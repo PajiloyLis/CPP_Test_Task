@@ -1,10 +1,13 @@
 #include <QApplication>
-#include <QPushButton>
+#include "ui/MainWindow.h"
 
-int main(int argc, char *argv[]) {
-    QApplication a(argc, argv);
-    QPushButton button("Hello world!", nullptr);
-    button.resize(200, 100);
-    button.show();
-    return QApplication::exec();
+int main(int argc, char** argv) {
+    QApplication app(argc, argv);
+
+    // controller_ == nullptr → MainWindow сам скажет «UI-only mode»
+    // и не будет пытаться подписываться на сигналы.
+    MainWindow window(nullptr);
+    window.show();
+
+    return app.exec();
 }

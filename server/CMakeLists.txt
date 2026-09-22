@@ -17,7 +17,13 @@ add_executable(server main.cpp
         ui/MainWindow.cpp
         ui/MainWindow.h
         ui/MainWindow.ui
-        controller/IServerController.h)
+        controller/IServerController.h
+        domainModels/ClientId.h
+        domainModels/ClientStatus.h
+        domainModels/ClientInfo.h
+        domainModels/Thresholds.h
+        domainModels/Measurements.h
+        domainModels/Severity.h)
 target_link_libraries(server
         Qt::Core
         Qt::Gui

@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow(IServerController* controller, QWidget* parent)
+MainWindow::MainWindow(IServerController *controller, QWidget *parent)
     : QMainWindow(parent),
       ui_(new Ui::MainWindow),
       controller_(controller) {
@@ -24,35 +24,35 @@ void MainWindow::setupUi() {
     ui_->tableData->setSelectionMode(QAbstractItemView::SingleSelection);
 
     ui_->tableClients->horizontalHeader()
-        ->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui_->tableClients->horizontalHeader()
-        ->setStretchLastSection(true);
+            ->setStretchLastSection(true);
 
     ui_->tableData->horizontalHeader()
-        ->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui_->tableData->horizontalHeader()
-        ->setStretchLastSection(true);
+            ->setStretchLastSection(true);
 
     setServerStatusLabel(false);
 }
 
 void MainWindow::setupConnections() {
-    connect(ui_->btnStartServer,  &QPushButton::clicked,
+    connect(ui_->btnStartServer, &QPushButton::clicked,
             this, &MainWindow::handleStartServerClicked);
-    connect(ui_->btnStopServer,   &QPushButton::clicked,
+    connect(ui_->btnStopServer, &QPushButton::clicked,
             this, &MainWindow::handleStopServerClicked);
     connect(ui_->btnStartClients, &QPushButton::clicked,
             this, &MainWindow::handleStartClientsClicked);
-    connect(ui_->btnStopClients,  &QPushButton::clicked,
+    connect(ui_->btnStopClients, &QPushButton::clicked,
             this, &MainWindow::handleStopClientsClicked);
-    connect(ui_->btnSettings,     &QPushButton::clicked,
+    connect(ui_->btnSettings, &QPushButton::clicked,
             this, &MainWindow::handleSettingsClicked);
-    connect(ui_->btnClearLog,     &QPushButton::clicked,
+    connect(ui_->btnClearLog, &QPushButton::clicked,
             this, &MainWindow::handleClearLogClicked);
 
-    connect(ui_->actionExit,       &QAction::triggered,
+    connect(ui_->actionExit, &QAction::triggered,
             this, &MainWindow::handleExitAction);
-    connect(ui_->actionAbout,      &QAction::triggered,
+    connect(ui_->actionAbout, &QAction::triggered,
             this, &MainWindow::handleAboutAction);
     connect(ui_->actionSaveConfig, &QAction::triggered,
             this, &MainWindow::handleSaveConfigAction);
@@ -124,9 +124,9 @@ void MainWindow::handleExitAction() {
 void MainWindow::handleAboutAction() {
     // TODO: rewrite this shit
     QMessageBox::about(this,
-        tr("About Telecom Server"),
-        tr("Telecom Server — Qt 6 / QTcpServer demo.\n"
-           "Client-server test assignment."));
+                       tr("About Telecom Server"),
+                       tr("Telecom Server — Qt 6 / QTcpServer demo.\n"
+                           "Client-server test assignment."));
 }
 
 void MainWindow::handleSaveConfigAction() {
@@ -148,7 +148,7 @@ void MainWindow::onServerStopped() {
     appendLog(QStringLiteral("Server stopped."));
 }
 
-void MainWindow::onFatalError(const QString& message) {
+void MainWindow::onFatalError(const QString &message) {
     appendLog(QStringLiteral("FATAL: ") + message);
     QMessageBox::critical(this, tr("Server error"), message);
 }
@@ -157,7 +157,7 @@ void MainWindow::onClientConnected(ClientInfo info) {
     const int row = ui_->tableClients->rowCount();
     ui_->tableClients->insertRow(row);
 
-    auto set = [&](int col, const QString& text) {
+    auto set = [&](int col, const QString &text) {
         ui_->tableClients->setItem(row, col, new QTableWidgetItem(text));
     };
     set(0, QString::number(info.id));
@@ -168,13 +168,13 @@ void MainWindow::onClientConnected(ClientInfo info) {
 
     clientRow_.insert(info.id, row);
     appendLog(QStringLiteral("Client %1 connected from %2:%3")
-              .arg(info.id).arg(info.ip).arg(info.port));
+        .arg(info.id).arg(info.ip).arg(info.port));
 }
 
 void MainWindow::onClientDisconnected(ClientId id) {
     const int row = rowForClient(id);
     if (row >= 0) {
-        if (auto* item = ui_->tableClients->item(row, 3)) {
+        if (auto *item = ui_->tableClients->item(row, 3)) {
             item->setText(QStringLiteral("Disconnected"));
         }
     }
@@ -186,13 +186,18 @@ void MainWindow::onClientStatusChanged(ClientId id, ClientStatus status) {
     if (row < 0) return;
 
     QString text;
-    QColor  color = Qt::black;
+    QColor color = Qt::black;
     switch (status) {
-        case ClientStatus::Connected:    text = "Connected";    break;
-        case ClientStatus::Disconnected: text = "Disconnected"; color = Qt::gray; break;
-        case ClientStatus::Warning:      text = "Warning";      color = QColor(200,120,0); break;
+        case ClientStatus::Connected: text = "Connected";
+            break;
+        case ClientStatus::Disconnected: text = "Disconnected";
+            color = Qt::gray;
+            break;
+        case ClientStatus::Warning: text = "Warning";
+            color = QColor(200, 120, 0);
+            break;
     }
-    if (auto* item = ui_->tableClients->item(row, 3)) {
+    if (auto *item = ui_->tableClients->item(row, 3)) {
         item->setText(text);
         item->setForeground(color);
     }
@@ -202,7 +207,7 @@ void MainWindow::onPacketReceived(IncomingPacket packet) {
     const int row = ui_->tableData->rowCount();
     ui_->tableData->insertRow(row);
 
-    auto set = [&](int col, const QString& text) {
+    auto set = [&](int col, const QString &text) {
         ui_->tableData->setItem(row, col, new QTableWidgetItem(text));
     };
     set(0, QString::number(packet.clientId));
@@ -216,7 +221,7 @@ void MainWindow::onPacketReceived(IncomingPacket packet) {
     }
 }
 
-void MainWindow::onLogMessage(const QString& message) {
+void MainWindow::onLogMessage(const QString &message) {
     appendLog(message);
 }
 
@@ -224,9 +229,9 @@ int MainWindow::rowForClient(ClientId id) const {
     return clientRow_.value(id, -1);
 }
 
-void MainWindow::appendLog(const QString& message) {
+void MainWindow::appendLog(const QString &message) {
     const QString line = QStringLiteral("[%1] %2")
-        .arg(QDateTime::currentDateTime().toString("HH:mm:ss"), message);
+            .arg(QDateTime::currentDateTime().toString("HH:mm:ss"), message);
     ui_->textLog->append(line);
 }
 
