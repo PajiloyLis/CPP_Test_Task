@@ -23,7 +23,9 @@ add_executable(server main.cpp
         domainModels/ClientInfo.h
         domainModels/Thresholds.h
         domainModels/Measurements.h
-        domainModels/Severity.h)
+        domainModels/Severity.h
+        controller/ServerController/ServerController.cpp
+        controller/ServerController/ServerController.h)
 target_link_libraries(server
         Qt::Core
         Qt::Gui
