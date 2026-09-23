@@ -4,12 +4,22 @@
 #include "controller/IServerController.h"
 #include "protocolModels/Incoming.h"
 #include "protocolModels/packetCodec/PacketCodec.h"
+#include "domainModels/Thresholds.h"
+#include "ui/settingsDialog/SettingsDialog.h"
+#include "configParsers/thresholdsConfigParser/ThresholdsParser.h"
 
 #include <QDateTime>
 #include <QTableWidgetItem>
 #include <QMainWindow>
 #include <QHash>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QCoreApplication>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 
+#include "services/SettingsService.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -60,8 +70,6 @@ private slots:
 
     void handleExitAction();
 
-    void handleAboutAction();
-
     void handleSaveConfigAction();
 
 private:
@@ -77,6 +85,7 @@ private:
 
     void setServerStatusLabel(bool running, quint16 port = 0);
 
+    SettingsService *settings_ = nullptr;
     Ui::MainWindow *ui_ = nullptr;
     IServerController *controller_ = nullptr; // не владеет
     QHash<ClientId, int> clientRow_;

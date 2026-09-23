@@ -36,7 +36,15 @@ add_executable(server main.cpp
         network/clientSession/ClientSession.cpp
         network/clientSession/ClientSession.h
         network/serverWorker/ServerWorker.cpp
-        network/serverWorker/ServerWorker.h)
+        network/serverWorker/ServerWorker.h
+        ui/settingsDialog/SettingsDialog.cpp
+        ui/settingsDialog/SettingsDialog.h
+        configParsers/thresholdsConfigParser/ThresholdsParser.cpp
+        configParsers/thresholdsConfigParser/ThresholdsParser.h
+        configModels/ServerSettings.h
+        configParsers/serverConfigParser/ServerSettingsParser.h
+        services/SettingsService.cpp
+        services/SettingsService.h)
 target_link_libraries(server
         Qt::Core
         Qt::Gui

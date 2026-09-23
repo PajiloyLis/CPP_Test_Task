@@ -13,9 +13,22 @@ int main(int argc, char** argv) {
     qRegisterMetaType<ClientStatus>("ClientStatus");
     qRegisterMetaType<Thresholds>("Thresholds");
     qRegisterMetaType<IncomingPacket>("IncomingPacket");
+    qRegisterMetaType<ServerSettings>("ServerSettings");
+
+    const QString appDir = QCoreApplication::applicationDirPath();
+
+    SettingsService settings(
+        appDir + "/server.json",
+        appDir + "/thresholds.json");
+    settings.load();
 
     ServerController controller(&app);
-    MainWindow window(&controller);
+
+    QObject::connect(&settings, &SettingsService::thresholdsChanged,
+                     &controller, &IServerController::applyThresholds);
+
+    MainWindow window(&controller, &settings);
     window.show();
+
     return app.exec();
 }

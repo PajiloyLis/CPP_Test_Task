@@ -53,8 +53,6 @@ void MainWindow::setupConnections() {
 
     connect(ui_->actionExit, &QAction::triggered,
             this, &MainWindow::handleExitAction);
-    connect(ui_->actionAbout, &QAction::triggered,
-            this, &MainWindow::handleAboutAction);
     connect(ui_->actionSaveConfig, &QAction::triggered,
             this, &MainWindow::handleSaveConfigAction);
     connect(ui_->actionClientParams, &QAction::triggered,
@@ -89,12 +87,13 @@ void MainWindow::connectToController() {
 
 
 void MainWindow::handleStartServerClicked() {
-    if (!controller_) {
+    if (!controller_ || !settings_) {
         appendLog(QStringLiteral("ERROR: no controller"));
         return;
     }
-    controller_->startServer(12345);
-    appendLog(QStringLiteral("Requested server start on port 12345..."));
+    const quint16 port = settings_->serverSettings().port;
+    controller_->startServer(port);
+    appendLog(QStringLiteral("Requested server start on port %1...").arg(port));
 }
 
 void MainWindow::handleStopServerClicked() {
@@ -116,8 +115,23 @@ void MainWindow::handleStopClientsClicked() {
 }
 
 void MainWindow::handleSettingsClicked() {
-    // TODO: открыть SettingsDialog, затем controller_->applyThresholds(...)
-    appendLog(QStringLiteral("[stub] Settings clicked"));
+    if (!controller_) {
+        appendLog(QStringLiteral("ERROR: no controller"));
+        return;
+    }
+    if (!settings_) {
+        appendLog(QStringLiteral("ERROR: no settings"));
+        return;
+    }
+
+    SettingsDialog dlg(settings_->thresholds(), this);
+    if (dlg.exec() != QDialog::Accepted) {
+        appendLog(QStringLiteral("Settings dialog cancelled."));
+        return;
+    }
+
+    settings_->setThresholds(dlg.thresholds());
+    appendLog(QStringLiteral("Thresholds updated."));
 }
 
 void MainWindow::handleClearLogClicked() {
@@ -129,17 +143,25 @@ void MainWindow::handleExitAction() {
     close();
 }
 
-void MainWindow::handleAboutAction() {
-    // TODO: rewrite this shit
-    QMessageBox::about(this,
-                       tr("About Telecom Server"),
-                       tr("Telecom Server — Qt 6 / QTcpServer demo.\n"
-                           "Client-server test assignment."));
-}
-
 void MainWindow::handleSaveConfigAction() {
-    // TODO: сериализовать thresholds в JSON и сохранить в файл.
-    appendLog(QStringLiteral("[stub] Save Configuration clicked"));
+    if (!settings_) return;
+
+    QFileDialog dlg(this, tr("Save thresholds"),
+                    settings_->thresholdsPath());
+    dlg.setAcceptMode(QFileDialog::AcceptSave);
+    dlg.setNameFilter(tr("JSON files (*.json);;All files (*)"));
+    dlg.setDefaultSuffix(QStringLiteral("json"));
+
+    if (dlg.exec() != QDialog::Accepted) return;
+    const QString path = dlg.selectedFiles().value(0);
+    if (path.isEmpty()) return;
+
+    const QString err = settings_->saveThresholds(path);
+    if (!err.isEmpty()) {
+        QMessageBox::warning(this, tr("Save failed"), err);
+        return;
+    }
+    appendLog(QStringLiteral("Thresholds saved to %1").arg(path));
 }
 
 void MainWindow::onServerStarted(quint16 port) {

@@ -29,7 +29,7 @@ public:
     void setStatus(ClientStatus s) { info_.status = s; }
 
 public slots:
-    void sendMessage(const OutcomingMessage &msg) const;
+    void sendMessage(const OutcomingMessage &msg);
 
     void close();
 

@@ -1,0 +1,8 @@
+{
+  "max_latency": 50.0,
+  "max_packet_loss": 5.0,
+  "min_bandwidth": 10.0,
+  "max_cpu_usage": 90,
+  "max_memory_usage": 90,
+  "send_log_on_alert": true
+}

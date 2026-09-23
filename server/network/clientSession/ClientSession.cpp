@@ -52,7 +52,7 @@ void ClientSession::onDisconnected() {
     emit disconnected(info_.id);
 }
 
-void ClientSession::onSocketError(QAbstractSocket::SocketError) {
+void ClientSession::onSocketError(QAbstractSocket::SocketError err) {
     if (err == QAbstractSocket::RemoteHostClosedError) {
         return;
     }
