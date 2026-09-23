@@ -34,7 +34,9 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(IServerController *controller, QWidget *parent = nullptr);
+    explicit MainWindow(IServerController *controller,
+                        SettingsService *settings,
+                        QWidget *parent = nullptr);
 
     ~MainWindow() override;
 

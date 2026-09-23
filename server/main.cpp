@@ -1,4 +1,5 @@
 #include <QApplication>
+
 #include "ui/MainWindow.h"
 #include "controller/ServerController/ServerController.h"
 #include "domainModels/ClientInfo.h"
@@ -20,12 +21,12 @@ int main(int argc, char** argv) {
     SettingsService settings(
         appDir + "/server.json",
         appDir + "/thresholds.json");
-    settings.load();
 
     ServerController controller(&app);
 
     QObject::connect(&settings, &SettingsService::thresholdsChanged,
-                     &controller, &IServerController::applyThresholds);
+                 &controller, &IServerController::applyThresholds);
+    settings.load();
 
     MainWindow window(&controller, &settings);
     window.show();

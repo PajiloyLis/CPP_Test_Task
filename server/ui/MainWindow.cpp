@@ -1,10 +1,13 @@
 #include "MainWindow.h"
 #include "ui/ui_MainWindow.h"
 
-MainWindow::MainWindow(IServerController *controller, QWidget *parent)
+MainWindow::MainWindow(IServerController *controller,
+                       SettingsService *settings,
+                       QWidget *parent)
     : QMainWindow(parent),
       ui_(new Ui::MainWindow),
-      controller_(controller) {
+      controller_(controller),
+      settings_(settings) {
     ui_->setupUi(this);
     setupUi();
     setupConnections();
@@ -92,7 +95,7 @@ void MainWindow::handleStartServerClicked() {
         return;
     }
     const quint16 port = settings_->serverSettings().port;
-    controller_->startServer(port);
+    controller_->startServer(settings_->serverSettings());
     appendLog(QStringLiteral("Requested server start on port %1...").arg(port));
 }
 

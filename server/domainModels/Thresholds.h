@@ -10,6 +10,8 @@ struct Thresholds {
     int maxCpuUsage = 90; // %
     int maxMemoryUsage = 90; // %
     bool sendLogOnAlert = true;
+
+    bool operator==(const Thresholds&) const = default;
 };
 
 Q_DECLARE_METATYPE(Thresholds)

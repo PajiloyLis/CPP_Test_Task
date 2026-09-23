@@ -3,6 +3,7 @@
 
 #include <QObject>
 
+#include "configModels/ServerSettings.h"
 #include "domainModels/ClientId.h"
 #include "domainModels/ClientInfo.h"
 #include "domainModels/Thresholds.h"
@@ -17,7 +18,7 @@ public:
 
     ~IServerController() override = default;
 
-    virtual void startServer(quint16 port) = 0;
+    virtual void startServer(const ServerSettings& settings) = 0;
 
     virtual void stopServer() = 0;
 

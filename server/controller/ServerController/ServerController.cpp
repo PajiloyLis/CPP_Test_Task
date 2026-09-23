@@ -53,10 +53,12 @@ ServerController::~ServerController() {
 // IServerController implementation
 // ---------------------------------------------------------------------------
 
-void ServerController::startServer(quint16 port) {
-    auto *w = worker_;
-    QMetaObject::invokeMethod(w, [w, port] { w->start(port); },
-                              Qt::QueuedConnection);
+void ServerController::startServer(const ServerSettings& s) {
+        auto* w = worker_;
+        QMetaObject::invokeMethod(
+            w,
+            [w, s] { w->start(s); },
+            Qt::QueuedConnection);
 }
 
 void ServerController::stopServer() {

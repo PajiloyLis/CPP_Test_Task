@@ -4,6 +4,7 @@
 #include <QHash>
 #include <QObject>
 
+#include "configModels/ServerSettings.h"
 #include "domainModels/ClientId.h"
 #include "domainModels/ClientInfo.h"
 #include "domainModels/ClientStatus.h"
@@ -23,7 +24,7 @@ public:
     ~ServerWorker() override;
 
 public slots:
-    void start(quint16 port);
+    void start(const ServerSettings& settings);
 
     void stop();
 

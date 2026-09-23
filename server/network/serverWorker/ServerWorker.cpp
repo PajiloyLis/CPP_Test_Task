@@ -16,9 +16,16 @@ ServerWorker::~ServerWorker() {
     sessions_.clear();
 }
 
-void ServerWorker::start(quint16 port) {
+void ServerWorker::start(const ServerSettings &s) {
     if (server_) {
         emit logMessage(QStringLiteral("Server already running."));
+        return;
+    }
+
+    QHostAddress host(s.bindAddress);
+    if (host.isNull()) {
+        emit fatalError(QStringLiteral("Invalid bind address: %1")
+            .arg(s.bindAddress));
         return;
     }
 
@@ -26,17 +33,18 @@ void ServerWorker::start(quint16 port) {
     connect(server_, &QTcpServer::newConnection,
             this, &ServerWorker::onNewConnection);
 
-    if (!server_->listen(QHostAddress::Any, port)) {
+
+    if (!server_->listen(host, s.port)) {
         const QString err = server_->errorString();
         server_->deleteLater();
         server_ = nullptr;
         emit fatalError(QStringLiteral("Cannot listen on port %1: %2")
-            .arg(port).arg(err));
+            .arg(s.port).arg(err));
         return;
     }
 
-    emit serverStarted(port);
-    emit logMessage(QStringLiteral("Server listening on port %1").arg(port));
+    emit serverStarted(s.port);
+    emit logMessage(QStringLiteral("Server listening on port %1:%2").arg(s.bindAddress).arg(s.port));
 }
 
 void ServerWorker::stop() {
@@ -158,9 +166,6 @@ void ServerWorker::evaluateThresholds(ClientSession *session,
         session->setStatus(ClientStatus::Warning);
         emit clientStatusChanged(session->id(), ClientStatus::Warning);
     }
-
-    session->setStatus(ClientStatus::Warning);
-    emit clientStatusChanged(session->id(), ClientStatus::Warning);
 
     AlertPayload alert;
     alert.severity = Severity::Warning;

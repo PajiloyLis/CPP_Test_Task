@@ -8,6 +8,8 @@
 struct ServerSettings {
     quint16 port = 12345;
     QString bindAddress = QStringLiteral("0.0.0.0");
+
+    bool operator==(const ServerSettings&) const = default;
 };
 
 Q_DECLARE_METATYPE(ServerSettings)

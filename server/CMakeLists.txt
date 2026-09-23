@@ -44,7 +44,8 @@ add_executable(server main.cpp
         configModels/ServerSettings.h
         configParsers/serverConfigParser/ServerSettingsParser.h
         services/SettingsService.cpp
-        services/SettingsService.h)
+        services/SettingsService.h
+        configParsers/serverConfigParser/ServerSettingsParser.h.cpp)
 target_link_libraries(server
         Qt::Core
         Qt::Gui
