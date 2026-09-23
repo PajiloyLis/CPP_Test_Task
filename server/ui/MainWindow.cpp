@@ -89,23 +89,30 @@ void MainWindow::connectToController() {
 
 
 void MainWindow::handleStartServerClicked() {
-    // TODO: controller_->startServer(12345);
-    appendLog(QStringLiteral("[stub] Start Server clicked"));
+    if (!controller_) {
+        appendLog(QStringLiteral("ERROR: no controller"));
+        return;
+    }
+    controller_->startServer(12345);
+    appendLog(QStringLiteral("Requested server start on port 12345..."));
 }
 
 void MainWindow::handleStopServerClicked() {
-    // TODO: controller_->stopServer();
-    appendLog(QStringLiteral("[stub] Stop Server clicked"));
+    if (!controller_) return;
+    controller_->stopServer();
+    appendLog(QStringLiteral("Requested server stop..."));
 }
 
 void MainWindow::handleStartClientsClicked() {
-    // TODO: controller_->broadcastStart();
-    appendLog(QStringLiteral("[stub] Start Clients clicked"));
+    if (!controller_) return;
+    controller_->broadcastStart();
+    appendLog(QStringLiteral("Requested Start command for all clients..."));
 }
 
 void MainWindow::handleStopClientsClicked() {
-    // TODO: controller_->broadcastStop();
-    appendLog(QStringLiteral("[stub] Stop Clients clicked"));
+    if (!controller_) return;
+    controller_->broadcastStop();
+    appendLog(QStringLiteral("Requested Stop command for all clients..."));
 }
 
 void MainWindow::handleSettingsClicked() {

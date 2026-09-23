@@ -19,7 +19,7 @@ ClientSession::ClientSession(QTcpSocket *socket, ClientInfo info, QObject *paren
             this, &ClientSession::onSocketError);
 }
 
-void ClientSession::sendMessage(const OutcomingMessage &msg) const {
+void ClientSession::sendMessage(const OutcomingMessage &msg) {
     if (!socket_ || socket_->state() != QAbstractSocket::ConnectedState) {
         return;
     }
@@ -53,5 +53,8 @@ void ClientSession::onDisconnected() {
 }
 
 void ClientSession::onSocketError(QAbstractSocket::SocketError) {
+    if (err == QAbstractSocket::RemoteHostClosedError) {
+        return;
+    }
     emit errorOccurred(info_.id, socket_->errorString());
 }

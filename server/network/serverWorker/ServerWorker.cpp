@@ -154,6 +154,11 @@ void ServerWorker::evaluateThresholds(ClientSession *session,
 
     if (reason.isEmpty()) return;
 
+    if (session->info().status != ClientStatus::Warning) {
+        session->setStatus(ClientStatus::Warning);
+        emit clientStatusChanged(session->id(), ClientStatus::Warning);
+    }
+
     session->setStatus(ClientStatus::Warning);
     emit clientStatusChanged(session->id(), ClientStatus::Warning);
 
