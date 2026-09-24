@@ -108,12 +108,16 @@ void MainWindow::handleStopServerClicked() {
 void MainWindow::handleStartClientsClicked() {
     if (!controller_) return;
     controller_->broadcastStart();
+    ui_->btnStartClients->setEnabled(false);
+    ui_->btnStopClients->setEnabled(true);
     appendLog(QStringLiteral("Requested Start command for all clients..."));
 }
 
 void MainWindow::handleStopClientsClicked() {
     if (!controller_) return;
     controller_->broadcastStop();
+    ui_->btnStartClients->setEnabled(true);
+    ui_->btnStopClients->setEnabled(false);
     appendLog(QStringLiteral("Requested Stop command for all clients..."));
 }
 
@@ -171,6 +175,8 @@ void MainWindow::onServerStarted(quint16 port) {
     setServerStatusLabel(true, port);
     ui_->btnStartServer->setEnabled(false);
     ui_->btnStopServer->setEnabled(true);
+    ui_->btnStartClients->setEnabled(true);
+    ui_->btnStopClients->setEnabled(false);
     appendLog(QStringLiteral("Server started on port %1").arg(port));
 }
 
@@ -178,6 +184,8 @@ void MainWindow::onServerStopped() {
     setServerStatusLabel(false);
     ui_->btnStartServer->setEnabled(true);
     ui_->btnStopServer->setEnabled(false);
+    ui_->btnStartClients->setEnabled(false);
+    ui_->btnStopClients->setEnabled(false);
     appendLog(QStringLiteral("Server stopped."));
 }
 
