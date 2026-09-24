@@ -5,12 +5,12 @@
 #include <QObject>
 
 #include "configModels/ServerSettings.h"
-#include "domainModels/ClientId.h"
+#include "commonProtocolModels/ClientId.h"
 #include "domainModels/ClientInfo.h"
 #include "domainModels/ClientStatus.h"
 #include "domainModels/Thresholds.h"
-#include "protocolModels/Incoming.h"
-#include "protocolModels/Outcoming.h"
+#include "commonProtocolModels/Incoming.h"
+#include "commonProtocolModels/Outcoming.h"
 
 class QTcpServer;
 class ClientSession;

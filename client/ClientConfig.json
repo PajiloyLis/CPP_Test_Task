@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "port": 12345,
+  "retry_interval_ms": 5000,
+  "min_send_interval_ms": 10,
+  "max_send_interval_ms": 100
+}

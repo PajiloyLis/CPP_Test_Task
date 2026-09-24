@@ -2,8 +2,8 @@
 #define TEST_TASK_CPP_MAINWINDOW_H
 
 #include "controller/IServerController.h"
-#include "protocolModels/Incoming.h"
-#include "protocolModels/packetCodec/PacketCodec.h"
+#include "commonProtocolModels/Incoming.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 #include "domainModels/Thresholds.h"
 #include "ui/settingsDialog/SettingsDialog.h"
 #include "configParsers/thresholdsConfigParser/ThresholdsParser.h"

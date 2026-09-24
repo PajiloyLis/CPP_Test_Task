@@ -2,7 +2,7 @@
 #define SERVER_SERVERCONTROLLER_H
 
 #include "controller/IServerController.h"
-#include "domainModels/ClientId.h"
+#include "commonProtocolModels/ClientId.h"
 #include "domainModels/Thresholds.h"
 
 class QThread;

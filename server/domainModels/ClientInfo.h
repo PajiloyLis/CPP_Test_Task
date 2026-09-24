@@ -5,7 +5,7 @@
 #include <QString>
 #include <QMetaType>
 
-#include "domainModels/ClientId.h"
+#include "commonProtocolModels/ClientId.h"
 #include "domainModels/ClientStatus.h"
 
 struct ClientInfo {

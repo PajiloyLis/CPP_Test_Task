@@ -5,8 +5,8 @@
 #include <QString>
 #include <optional>
 
-#include "protocolModels/Incoming.h"
-#include "protocolModels/Outcoming.h"
+#include "commonProtocolModels/Incoming.h"
+#include "commonProtocolModels/Outcoming.h"
 
 namespace PacketCodec {
     QByteArray encodeInbound(const IncomingPayload &payload);

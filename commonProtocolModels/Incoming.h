@@ -6,8 +6,8 @@
 #include <QString>
 #include <variant>
 
-#include "domainModels/ClientId.h"
-#include "domainModels/Measurements.h"
+#include "commonProtocolModels/ClientId.h"
+#include "commonProtocolModels/Measurements.h"
 
 enum class DataType {
     NetworkMetrics,

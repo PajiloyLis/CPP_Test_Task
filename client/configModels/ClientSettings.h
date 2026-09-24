@@ -4,7 +4,7 @@
 #include <QMetaType>
 #include <QString>
 
-struct ClientConfig {
+struct ClientSettings {
     QString host               = QStringLiteral("localhost");
     quint16 port               = 12345;
 
@@ -12,9 +12,9 @@ struct ClientConfig {
     int minSendIntervalMs      = 10;
     int maxSendIntervalMs      = 100;
 
-    bool operator==(const ClientConfig&) const = default;
+    bool operator==(const ClientSettings&) const = default;
 };
 
-Q_DECLARE_METATYPE(ClientConfig)
+Q_DECLARE_METATYPE(ClientSettings)
 
 #endif //TESTTASK_CLIENTCONFIG_H

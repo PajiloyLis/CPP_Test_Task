@@ -6,7 +6,7 @@
 #include <QTcpSocket>
 
 #include "network/clientSession/ClientSession.h"
-#include "protocolModels/packetCodec/PacketCodec.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 ServerWorker::ServerWorker(QObject *parent) : QObject(parent) {
 }

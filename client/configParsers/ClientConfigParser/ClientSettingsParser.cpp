@@ -1,13 +1,8 @@
-#include "configParsers/ClientSettingsParser.h"
-
-
-#include <QJsonDocument>
-#include <QJsonParseError>
-#include <QJsonValue>
+#include "configParsers/ClientConfigParser/ClientSettingsParser.h"
 
 namespace ClientConfigJson {
 
-QJsonObject toJson(const ClientConfig& c) {
+QJsonObject toJson(const ClientSettings& c) {
     return QJsonObject{
         {"host",                 c.host},
         {"port",                 c.port},
@@ -17,7 +12,7 @@ QJsonObject toJson(const ClientConfig& c) {
     };
 }
 
-std::optional<ClientConfig> fromJson(const QByteArray& data) {
+std::optional<ClientSettings> fromJson(const QByteArray& data) {
     QJsonParseError err{};
     const QJsonDocument doc = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject()) {
@@ -25,7 +20,7 @@ std::optional<ClientConfig> fromJson(const QByteArray& data) {
     }
 
     const QJsonObject obj = doc.object();
-    ClientConfig c;
+    ClientSettings c;
 
     auto readString = [&](const char* key, QString& out) -> bool {
         const QJsonValue v = obj.value(QLatin1String(key));

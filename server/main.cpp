@@ -5,7 +5,7 @@
 #include "domainModels/ClientInfo.h"
 #include "domainModels/ClientStatus.h"
 #include "domainModels/Thresholds.h"
-#include "protocolModels/Incoming.h"
+#include "commonProtocolModels/Incoming.h"
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);

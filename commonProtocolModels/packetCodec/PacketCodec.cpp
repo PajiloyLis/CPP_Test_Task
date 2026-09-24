@@ -1,4 +1,4 @@
-#include "protocolModels/packetCodec/PacketCodec.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>

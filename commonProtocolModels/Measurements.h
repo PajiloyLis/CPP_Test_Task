@@ -2,7 +2,7 @@
 #define SERVER_MEASUREMENTS_H
 
 #include <QString>
-#include "domainModels/Severity.h"
+#include "commonProtocolModels/Severity.h"
 
 struct NetworkMetrics {
     double bandwidth = 0.0; // Mbps

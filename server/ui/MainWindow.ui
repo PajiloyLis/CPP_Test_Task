@@ -16,187 +16,203 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayoutMain">
     <item>
-     <layout class="QHBoxLayout" name="controlsLayout">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QPushButton" name="btnStartServer">
-        <property name="text">
-         <string>Start Server</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="controlsLayout">
+        <item>
+         <widget class="QPushButton" name="btnStartServer">
+          <property name="text">
+           <string>Start Server</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnStopServer">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Stop Server</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnStartClients">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Start Clients</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnStopClients">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Stop Clients</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnSettings">
+          <property name="text">
+           <string>Client Settings...</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnClearLog">
+          <property name="text">
+           <string>Clear Log</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lblServerStatus">
+          <property name="styleSheet">
+           <string notr="true">color: #b00; font-weight: bold;</string>
+          </property>
+          <property name="text">
+           <string>Server: Stopped</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="btnStopServer">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Stop Server</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QGroupBox" name="groupClients">
+           <property name="title">
+            <string>Connected Clients</string>
+           </property>
+           <layout class="QVBoxLayout" name="layoutClients">
+            <item>
+             <widget class="QTableWidget" name="tableClients">
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+              <property name="selectionBehavior">
+               <enum>QAbstractItemView::SelectItems</enum>
+              </property>
+              <column>
+               <property name="text">
+                <string>Client ID</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>IP Address</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Port</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Status</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Connected At</string>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QGroupBox" name="groupLog">
+           <property name="title">
+            <string>Event Log</string>
+           </property>
+           <layout class="QVBoxLayout" name="layoutLog">
+            <item>
+             <widget class="QTextEdit" name="textLog">
+              <property name="font">
+               <font>
+                <family>Monospace</family>
+               </font>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QPushButton" name="btnStartClients">
-        <property name="enabled">
-         <bool>false</bool>
+       <widget class="QGroupBox" name="groupData">
+        <property name="title">
+         <string>Client Data</string>
         </property>
-        <property name="text">
-         <string>Start Clients</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnStopClients">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Stop Clients</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnSettings">
-        <property name="text">
-         <string>Client Settings...</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnClearLog">
-        <property name="text">
-         <string>Clear Log</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="lblServerStatus">
-        <property name="styleSheet">
-         <string notr="true">color: #b00; font-weight: bold;</string>
-        </property>
-        <property name="text">
-         <string>Server: Stopped</string>
-        </property>
+        <widget class="QTableWidget" name="tableData">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>1081</width>
+           <height>192</height>
+          </rect>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectItems</enum>
+         </property>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>50</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Client ID</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Received At</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Content</string>
+          </property>
+         </column>
+        </widget>
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QGroupBox" name="groupClients">
-       <property name="title">
-        <string>Connected Clients</string>
-       </property>
-       <layout class="QVBoxLayout" name="layoutClients">
-        <item>
-         <widget class="QTableWidget" name="tableClients">
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectItems</enum>
-          </property>
-          <column>
-           <property name="text">
-            <string>Client ID</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>IP Address</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Port</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Status</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Connected At</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QGroupBox" name="groupData">
-       <property name="title">
-        <string>Client Data</string>
-       </property>
-       <layout class="QVBoxLayout" name="layoutData">
-        <item>
-         <widget class="QTableWidget" name="tableData">
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectItems</enum>
-          </property>
-          <column>
-           <property name="text">
-            <string>Client ID</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Type</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Content</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Received At</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QGroupBox" name="groupLog">
-       <property name="title">
-        <string>Event Log</string>
-       </property>
-       <layout class="QVBoxLayout" name="layoutLog">
-        <item>
-         <widget class="QTextEdit" name="textLog">
-          <property name="font">
-           <font>
-            <family>Monospace</family>
-           </font>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
     </item>
    </layout>
   </widget>

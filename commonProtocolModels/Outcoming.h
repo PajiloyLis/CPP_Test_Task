@@ -5,8 +5,8 @@
 #include <QString>
 #include <variant>
 
-#include "domainModels/ClientId.h"
-#include "domainModels/Severity.h"
+#include "commonProtocolModels/ClientId.h"
+#include "commonProtocolModels/Severity.h"
 
 enum class CommandType {
     Welcome,

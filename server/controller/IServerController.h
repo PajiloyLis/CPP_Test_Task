@@ -4,10 +4,10 @@
 #include <QObject>
 
 #include "configModels/ServerSettings.h"
-#include "domainModels/ClientId.h"
+#include "commonProtocolModels/ClientId.h"
 #include "domainModels/ClientInfo.h"
 #include "domainModels/Thresholds.h"
-#include "protocolModels/Incoming.h"
+#include "commonProtocolModels/Incoming.h"
 
 class IServerController : public QObject {
     Q_OBJECT

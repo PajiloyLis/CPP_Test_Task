@@ -8,12 +8,12 @@
 #include <QAbstractSocket>
 #include <QObject>
 
-#include "domainModels/ClientId.h"
+#include "commonProtocolModels/ClientId.h"
 #include "domainModels/ClientInfo.h"
 #include "domainModels/ClientStatus.h"
-#include "protocolModels/Incoming.h"
-#include "protocolModels/lineBuffer/LineBuffer.h"
-#include "protocolModels/Outcoming.h"
+#include "commonProtocolModels/Incoming.h"
+#include "commonProtocolModels/lineBuffer/LineBuffer.h"
+#include "commonProtocolModels/Outcoming.h"
 
 class QTcpSocket;
 

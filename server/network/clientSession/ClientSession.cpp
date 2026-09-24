@@ -3,7 +3,7 @@
 #include <QTcpSocket>
 #include <utility>
 
-#include "protocolModels/packetCodec/PacketCodec.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 ClientSession::ClientSession(QTcpSocket *socket, ClientInfo info, QObject *parent)
     : QObject(parent),
