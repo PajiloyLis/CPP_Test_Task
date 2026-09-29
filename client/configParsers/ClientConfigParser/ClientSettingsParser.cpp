@@ -1,5 +1,7 @@
 #include "configParsers/ClientConfigParser/ClientSettingsParser.h"
 
+#include <QJsonParseError>
+
 namespace ClientConfigJson {
 
 QJsonObject toJson(const ClientSettings& c) {

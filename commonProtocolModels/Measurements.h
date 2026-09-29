@@ -2,6 +2,7 @@
 #define SERVER_MEASUREMENTS_H
 
 #include <QString>
+
 #include "commonProtocolModels/Severity.h"
 
 struct NetworkMetrics {

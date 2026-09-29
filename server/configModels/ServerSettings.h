@@ -1,7 +1,6 @@
 #ifndef SERVER_SERVERSETTINGS_H
 #define SERVER_SERVERSETTINGS_H
 
-
 #include <QMetaType>
 #include <QString>
 

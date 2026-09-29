@@ -1,8 +1,6 @@
 #ifndef SERVER_PACKETCODEC_H
 #define SERVER_PACKETCODEC_H
 
-#include <QByteArray>
-#include <QString>
 #include <optional>
 
 #include "commonProtocolModels/Incoming.h"

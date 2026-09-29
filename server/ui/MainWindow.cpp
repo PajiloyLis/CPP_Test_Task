@@ -1,5 +1,13 @@
 #include "MainWindow.h"
 #include "ui/ui_MainWindow.h"
+#include "domainModels/Thresholds.h"
+#include "ui/settingsDialog/SettingsDialog.h"
+
+
+#include <QTableWidgetItem>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QTextBlock>
 
 MainWindow::MainWindow(IServerController *controller,
                        SettingsService *settings,

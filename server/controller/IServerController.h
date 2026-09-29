@@ -1,9 +1,6 @@
 #ifndef TEST_TASK_CPP_ISERVERCONTROLLER_H
 #define TEST_TASK_CPP_ISERVERCONTROLLER_H
 
-#include <QObject>
-#include <QVector>
-
 #include "configModels/ServerSettings.h"
 #include "commonProtocolModels/ClientId.h"
 #include "domainModels/ClientInfo.h"

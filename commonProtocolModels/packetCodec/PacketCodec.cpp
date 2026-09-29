@@ -1,6 +1,5 @@
 #include "commonProtocolModels/packetCodec/PacketCodec.h"
 
-#include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
 #include <QJsonValue>

@@ -1,6 +1,5 @@
 #include "configParsers/thresholdsConfigParser/ThresholdsParser.h"
 
-#include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonValue>
 

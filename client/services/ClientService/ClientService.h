@@ -1,7 +1,6 @@
 #ifndef TESTTASK_CLIENTSERVICE_H
 #define TESTTASK_CLIENTSERVICE_H
 
-#include <QAbstractSocket>
 #include <QObject>
 #include <QRandomGenerator>
 #include <QString>
@@ -9,8 +8,6 @@
 #include <QTcpSocket>
 #include <QTimer>
 
-#include "commonProtocolModels/packetCodec/PacketCodec.h"
-#include "commonProtocolModels/Severity.h"
 #include "commonProtocolModels/ClientId.h"
 #include "commonProtocolModels/Incoming.h"
 #include "commonProtocolModels/Outcoming.h"

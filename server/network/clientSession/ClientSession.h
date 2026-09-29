@@ -1,7 +1,3 @@
-//
-// Created by ivan on 23.09.2026.
-//
-
 #ifndef SERVER_CLIENTSESSION_H
 #define SERVER_CLIENTSESSION_H
 

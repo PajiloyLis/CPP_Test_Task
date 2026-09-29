@@ -2,7 +2,6 @@
 #define SERVER_SERVERSETTINGSPARSER_H
 
 #include <QJsonObject>
-#include <QJsonParseError>
 
 #include "configModels/ServerSettings.h"
 

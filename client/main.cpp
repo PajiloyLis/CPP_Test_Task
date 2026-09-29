@@ -1,6 +1,5 @@
 #include <QCoreApplication>
 #include <QFile>
-#include <QTimer>
 
 #include "configParsers/ClientConfigParser/ClientSettingsParser.h"
 #include "services/ClientService/ClientService.h"

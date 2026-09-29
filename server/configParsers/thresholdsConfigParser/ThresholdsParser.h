@@ -1,7 +1,6 @@
 #ifndef SERVER_THRESHOLDSPARSER_H
 #define SERVER_THRESHOLDSPARSER_H
 
-#include <QByteArray>
 #include <QJsonObject>
 #include <optional>
 

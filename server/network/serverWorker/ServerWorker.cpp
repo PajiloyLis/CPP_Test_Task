@@ -1,7 +1,6 @@
 #include "ServerWorker.h"
 
 #include <QDateTime>
-#include <QHostAddress>
 #include <QTcpServer>
 #include <QTcpSocket>
 

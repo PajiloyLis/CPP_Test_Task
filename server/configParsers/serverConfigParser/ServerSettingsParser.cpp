@@ -1,5 +1,7 @@
 #include "configParsers/serverConfigParser/ServerSettingsParser.h"
 
+#include <QJsonParseError>
+
 QJsonObject ServerSettingsJson::toJson(const ServerSettings& s) {
     return QJsonObject{
             {"port",         s.port},

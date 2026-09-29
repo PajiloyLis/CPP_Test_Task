@@ -1,4 +1,5 @@
 #include "services/ClientService/ClientService.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 namespace {
     const QStringList kLogWords = {

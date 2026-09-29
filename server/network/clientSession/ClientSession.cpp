@@ -1,9 +1,8 @@
 #include "ClientSession.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 #include <QTcpSocket>
 #include <utility>
-
-#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 ClientSession::ClientSession(QTcpSocket *socket, ClientInfo info, QObject *parent)
     : QObject(parent),

@@ -1,9 +1,6 @@
 #ifndef SERVER_SERVERWORKER_H
 #define SERVER_SERVERWORKER_H
 
-#include <QHash>
-#include <QObject>
-#include <QVector>
 #include <QTimer>
 #include <QStringList>
 

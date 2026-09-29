@@ -10,6 +10,7 @@
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
 
+// Регистрация типов передаваемых через очереди между GUI и воркером
     qRegisterMetaType<ClientInfo>("ClientInfo");
     qRegisterMetaType<ClientStatus>("ClientStatus");
     qRegisterMetaType<Thresholds>("Thresholds");
@@ -19,6 +20,7 @@ int main(int argc, char** argv) {
 
     const QString appDir = QCoreApplication::applicationDirPath();
 
+// Конфиги лежат рядом с main.cpp в корне сервера и копируются при сборке
     SettingsService settings(
         appDir + "/server.json",
         appDir + "/thresholds.json");

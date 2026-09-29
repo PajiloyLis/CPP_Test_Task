@@ -1,4 +1,5 @@
 #include "SettingsService.h"
+#include "configParsers/thresholdsConfigParser/ThresholdsParser.h"
 
 #include <QDir>
 #include <QFileInfo>

@@ -4,26 +4,14 @@
 #include "controller/IServerController.h"
 #include "commonProtocolModels/Incoming.h"
 #include "commonProtocolModels/packetCodec/PacketCodec.h"
-#include "domainModels/Thresholds.h"
-#include "ui/settingsDialog/SettingsDialog.h"
-#include "configParsers/thresholdsConfigParser/ThresholdsParser.h"
+#include "services/SettingsService.h"
 
 #include <QDateTime>
-#include <QTableWidgetItem>
 #include <QMainWindow>
 #include <QHash>
-#include <QMessageBox>
-#include <QFileDialog>
 #include <QCoreApplication>
-#include <QFile>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QTextCursor>
-#include <QTextDocument>
-#include <QTextBlock>
 #include <QPlainTextEdit>
-
-#include "services/SettingsService.h"
 
 QT_BEGIN_NAMESPACE
 
