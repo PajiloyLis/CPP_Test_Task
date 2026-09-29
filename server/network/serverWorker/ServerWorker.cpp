@@ -9,6 +9,14 @@
 #include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 ServerWorker::ServerWorker(QObject *parent) : QObject(parent) {
+    batchTimer_ = new QTimer(this);
+    batchTimer_->setSingleShot(true);
+    connect(batchTimer_, &QTimer::timeout,
+            this, &ServerWorker::flushBatch);
+    logBatchTimer_ = new QTimer(this);
+    logBatchTimer_->setSingleShot(true);
+    connect(logBatchTimer_, &QTimer::timeout,
+            this, &ServerWorker::flushLogs);
 }
 
 ServerWorker::~ServerWorker() {
@@ -16,9 +24,22 @@ ServerWorker::~ServerWorker() {
     sessions_.clear();
 }
 
+void ServerWorker::flushLogs() {
+    if (pendingLogs_.isEmpty()) return;
+    emit logsReceived(pendingLogs_);
+    pendingLogs_.clear();
+}
+
+void ServerWorker::enqueueLog(const QString &message) {
+    pendingLogs_.append(message);
+    if (!logBatchTimer_->isActive()) {
+        logBatchTimer_->start(kLogBatchIntervalMs);
+    }
+}
+
 void ServerWorker::start(const ServerSettings &s) {
     if (server_) {
-        emit logMessage(QStringLiteral("Server already running."));
+        enqueueLog(QStringLiteral("Server already running."));
         return;
     }
 
@@ -44,16 +65,23 @@ void ServerWorker::start(const ServerSettings &s) {
     }
 
     emit serverStarted(s.port);
-    emit logMessage(QStringLiteral("Server listening on port %1:%2").arg(s.bindAddress).arg(s.port));
+    enqueueLog(QStringLiteral("Server listening on port %1:%2").arg(s.bindAddress).arg(s.port));
 }
 
 void ServerWorker::stop() {
     if (!server_) {
-        emit logMessage(QStringLiteral("Server is not running."));
+        enqueueLog(QStringLiteral("Server is not running."));
         return;
     }
 
+    batchTimer_->stop();
+    flushBatch();
+    logBatchTimer_->stop();
+    flushLogs();
+
+
     const auto sessions = sessions_;
+    lastAlertMs_.clear();
     sessions_.clear();
 
     for (auto *s: sessions) {
@@ -66,27 +94,27 @@ void ServerWorker::stop() {
     server_ = nullptr;
 
     emit serverStopped();
-    emit logMessage(QStringLiteral("Server stopped."));
+    enqueueLog(QStringLiteral("Server stopped."));
 }
 
 void ServerWorker::broadcastStart() {
     broadcast(OutcomingMessage{CommandType::Start, StartPayload{}});
-    emit logMessage(QStringLiteral("Start sent to all clients."));
+    enqueueLog(QStringLiteral("Start sent to all clients."));
 }
 
 void ServerWorker::broadcastStop() {
     broadcast(OutcomingMessage{CommandType::Stop, StopPayload{}});
-    emit logMessage(QStringLiteral("Stop sent to all clients."));
+    enqueueLog(QStringLiteral("Stop sent to all clients."));
 }
 
 void ServerWorker::updateThresholds(const Thresholds &thresholds) {
     thresholds_ = thresholds;
-    emit logMessage(QStringLiteral("Thresholds updated."));
+    enqueueLog(QStringLiteral("Thresholds updated."));
 }
 
 void ServerWorker::kickClient(ClientId id) {
     if (auto *s = sessions_.value(id, nullptr)) {
-        emit logMessage(QStringLiteral("Kicking client %1.").arg(id));
+        enqueueLog(QStringLiteral("Kicking client %1.").arg(id));
         s->close();
     }
 }
@@ -116,8 +144,103 @@ void ServerWorker::onNewConnection() {
         sendTo(session, OutcomingMessage{CommandType::Welcome, w});
 
         emit clientConnected(info);
-        emit logMessage(QStringLiteral("Client %1 connected from %2:%3")
+        enqueueLog(QStringLiteral("Client %1 connected from %2:%3")
             .arg(info.id).arg(info.ip).arg(info.port));
+    }
+}
+
+void ServerWorker::evaluateThresholds(ClientSession *session,
+                                      const IncomingPayload &payload) {
+    bool exceeded = false;
+    const char *metricName = nullptr;
+    double actualValue = 0.0;
+    double thresholdValue = 0.0;
+
+    if (const auto *m = std::get_if<NetworkMetrics>(&payload.value)) {
+        if (m->latency > thresholds_.maxLatency) {
+            exceeded = true;
+            metricName = "latency";
+            actualValue = m->latency;
+            thresholdValue = thresholds_.maxLatency;
+        } else if (m->packetLoss > thresholds_.maxPacketLoss) {
+            exceeded = true;
+            metricName = "packet_loss";
+            actualValue = m->packetLoss;
+            thresholdValue = thresholds_.maxPacketLoss;
+        } else if (m->bandwidth < thresholds_.minBandwidth) {
+            exceeded = true;
+            metricName = "bandwidth";
+            actualValue = m->bandwidth;
+            thresholdValue = thresholds_.minBandwidth;
+        }
+    } else if (const auto *s = std::get_if<DeviceStatus>(&payload.value)) {
+        if (s->cpuUsage > thresholds_.maxCpuUsage) {
+            exceeded = true;
+            metricName = "cpu_usage";
+            actualValue = s->cpuUsage;
+            thresholdValue = thresholds_.maxCpuUsage;
+        } else if (s->memoryUsage > thresholds_.maxMemoryUsage) {
+            exceeded = true;
+            metricName = "memory_usage";
+            actualValue = s->memoryUsage;
+            thresholdValue = thresholds_.maxMemoryUsage;
+        }
+    }
+
+    if (!exceeded) return;
+
+    if (session->info().status != ClientStatus::Warning) {
+        session->setStatus(ClientStatus::Warning);
+        emit clientStatusChanged(session->id(), ClientStatus::Warning);
+
+        enqueueLog(QStringLiteral("Client %1 entered WARNING on %2")
+            .arg(session->id()).arg(QLatin1String(metricName)));
+    }
+
+    const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (now - lastAlertMs_.value(session->id(), 0) < kAlertCooldownMs) {
+        return;
+    }
+    lastAlertMs_[session->id()] = now;
+
+    const QString reason = QStringLiteral("%1 %2 > %3")
+            .arg(QLatin1String(metricName))
+            .arg(actualValue)
+            .arg(thresholdValue);
+
+    AlertPayload alert;
+    alert.severity = Severity::Warning;
+    alert.reason = reason;
+    sendTo(session, OutcomingMessage{CommandType::Alert, alert});
+
+    enqueueLog(QStringLiteral("ALERT client %1: %2")
+        .arg(session->id()).arg(reason));
+}
+
+void ServerWorker::onSessionDisconnected(ClientId id) {
+    emit clientDisconnected(id);
+    enqueueLog(QStringLiteral("Client %1 disconnected.").arg(id));
+    cleanupSession(id);
+}
+
+void ServerWorker::onSessionError(ClientId id, const QString &message) {
+    enqueueLog(QStringLiteral("Client %1 error: %2").arg(id).arg(message));
+}
+
+void ServerWorker::sendTo(ClientSession *session, const OutcomingMessage &msg) {
+    if (session) session->sendMessage(msg);
+}
+
+void ServerWorker::broadcast(const OutcomingMessage &msg) {
+    for (auto *s: std::as_const(sessions_)) {
+        s->sendMessage(msg);
+    }
+}
+
+void ServerWorker::cleanupSession(ClientId id) {
+    lastAlertMs_.remove(id);
+    if (auto *s = sessions_.take(id)) {
+        s->deleteLater();
     }
 }
 
@@ -132,72 +255,19 @@ void ServerWorker::onSessionPacket(ClientId id, IncomingPayload payload) {
     pkt.payload = std::move(payload);
     pkt.summary = PacketCodec::summarizeInbound(pkt.payload);
     pkt.receivedAt = QDateTime::currentDateTime();
-    emit packetReceived(pkt);
-}
 
-void ServerWorker::evaluateThresholds(ClientSession *session,
-                                      const IncomingPayload &payload) {
-    QString reason;
+    pendingPackets_.append(std::move(pkt));
 
-    if (const auto *m = std::get_if<NetworkMetrics>(&payload.value)) {
-        if (m->latency > thresholds_.maxLatency) {
-            reason = QStringLiteral("latency %1 ms > %2 ms")
-                    .arg(m->latency).arg(thresholds_.maxLatency);
-        } else if (m->packetLoss > thresholds_.maxPacketLoss) {
-            reason = QStringLiteral("packet_loss %1%% > %2%%")
-                    .arg(m->packetLoss).arg(thresholds_.maxPacketLoss);
-        } else if (m->bandwidth < thresholds_.minBandwidth) {
-            reason = QStringLiteral("bandwidth %1 Mbps < %2 Mbps")
-                    .arg(m->bandwidth).arg(thresholds_.minBandwidth);
-        }
-    } else if (const auto *s = std::get_if<DeviceStatus>(&payload.value)) {
-        if (s->cpuUsage > thresholds_.maxCpuUsage) {
-            reason = QStringLiteral("cpu_usage %1%% > %2%%")
-                    .arg(s->cpuUsage).arg(thresholds_.maxCpuUsage);
-        } else if (s->memoryUsage > thresholds_.maxMemoryUsage) {
-            reason = QStringLiteral("memory_usage %1%% > %2%%")
-                    .arg(s->memoryUsage).arg(thresholds_.maxMemoryUsage);
-        }
-    }
-
-    if (reason.isEmpty()) return;
-
-    if (session->info().status != ClientStatus::Warning) {
-        session->setStatus(ClientStatus::Warning);
-        emit clientStatusChanged(session->id(), ClientStatus::Warning);
-    }
-
-    AlertPayload alert;
-    alert.severity = Severity::Warning;
-    alert.reason = reason;
-    sendTo(session, OutcomingMessage{CommandType::Alert, alert});
-
-    emit logMessage(QStringLiteral("ALERT client %1: %2")
-        .arg(session->id()).arg(reason));
-}
-
-void ServerWorker::onSessionDisconnected(ClientId id) {
-    emit clientDisconnected(id);
-    emit logMessage(QStringLiteral("Client %1 disconnected.").arg(id));
-    cleanupSession(id);
-}
-
-void ServerWorker::onSessionError(ClientId id, const QString &message) {
-    emit logMessage(QStringLiteral("Client %1 error: %2").arg(id).arg(message));
-}
-
-void ServerWorker::sendTo(ClientSession *session, const OutcomingMessage &msg) {
-    if (session) session->sendMessage(msg);
-}
-
-void ServerWorker::broadcast(const OutcomingMessage &msg) {
-    for (auto *s: std::as_const(sessions_)) {
-        s->sendMessage(msg);
+    if (pendingPackets_.size() >= kMaxBatchSize) {
+        batchTimer_->stop();
+        flushBatch();
+    } else if (!batchTimer_->isActive()) {
+        batchTimer_->start(kBatchIntervalMs);
     }
 }
 
-void ServerWorker::cleanupSession(ClientId id) {
-    if (auto *s = sessions_.take(id)) {
-        s->deleteLater();
-    }
+void ServerWorker::flushBatch() {
+    if (pendingPackets_.isEmpty()) return;
+    emit packetsReceived(pendingPackets_);
+    pendingPackets_.clear();
 }

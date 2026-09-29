@@ -32,10 +32,17 @@ void MainWindow::setupUi() {
     ui_->tableClients->horizontalHeader()
             ->setStretchLastSection(true);
 
+    // ui_->tableData->horizontalHeader()
+    //         ->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui_->tableData->horizontalHeader()
-            ->setSectionResizeMode(QHeaderView::ResizeToContents);
-    ui_->tableData->horizontalHeader()
-            ->setStretchLastSection(true);
+            ->setSectionResizeMode(QHeaderView::Interactive);
+    ui_->tableData->horizontalHeader()->setStretchLastSection(true);
+
+    ui_->textLog->setReadOnly(true);
+    ui_->textLog->setMaximumBlockCount(1000);
+    ui_->textLog->setUndoRedoEnabled(false);
+    ui_->textLog->setLineWrapMode(QPlainTextEdit::NoWrap);
+    ui_->textLog->setTextInteractionFlags(Qt::NoTextInteraction);
 
     setServerStatusLabel(false);
 }
@@ -82,12 +89,32 @@ void MainWindow::connectToController() {
     connect(controller_, &IServerController::clientStatusChanged,
             this, &MainWindow::onClientStatusChanged);
 
-    connect(controller_, &IServerController::packetReceived,
-            this, &MainWindow::onPacketReceived);
+    connect(controller_, &IServerController::packetsReceived,
+            this, &MainWindow::onPacketsReceived);
     connect(controller_, &IServerController::logMessage,
             this, &MainWindow::onLogMessage);
+    connect(controller_, &IServerController::logsReceived,
+            this, &MainWindow::onLogsReceived);
 }
 
+void MainWindow::onLogsReceived(const QStringList &lines) {
+    if (lines.isEmpty()) return;
+
+    QString block;
+    block.reserve(lines.size() * 64);
+
+    const QString ts = QDateTime::currentDateTime().toString("HH:mm:ss");
+
+    for (const auto &line : lines) {
+        block += QLatin1Char('[');
+        block += ts;
+        block += QLatin1String("] ");
+        block += line;
+        block += QLatin1Char('\n');
+    }
+
+    ui_->textLog->appendPlainText(block);
+}
 
 void MainWindow::handleStartServerClicked() {
     if (!controller_ || !settings_) {
@@ -244,22 +271,41 @@ void MainWindow::onClientStatusChanged(ClientId id, ClientStatus status) {
     }
 }
 
-void MainWindow::onPacketReceived(IncomingPacket packet) {
-    const int row = ui_->tableData->rowCount();
-    ui_->tableData->insertRow(row);
-
-    auto set = [&](int col, const QString &text) {
-        ui_->tableData->setItem(row, col, new QTableWidgetItem(text));
-    };
-    set(0, QString::number(packet.clientId));
-    set(1, PacketCodec::dataTypeToString(packet.payload.type));
-    set(2, packet.summary);
-    set(3, packet.receivedAt.toString(Qt::ISODate));
+void MainWindow::onPacketsReceived(const QVector<IncomingPacket> &packets) {
+    if (packets.isEmpty()) return;
 
     constexpr int kMaxRows = 1000;
-    while (ui_->tableData->rowCount() > kMaxRows) {
-        ui_->tableData->removeRow(0);
+    const int incoming = packets.size();
+
+    ui_->tableData->setUpdatesEnabled(false);
+
+    const int rowsToRemove = qMax(0,
+                                  ui_->tableData->rowCount() + incoming - kMaxRows);
+    if (rowsToRemove > 0) {
+        ui_->tableData->model()->removeRows(0, rowsToRemove);
     }
+
+    const int startRow = ui_->tableData->rowCount();
+    ui_->tableData->model()->insertRows(startRow, incoming);
+
+    for (int i = 0; i < incoming; ++i) {
+        const auto &packet = packets[i];
+        const int row = startRow + i;
+
+        auto set = [&](int col, const QString &text) {
+            if (auto *item = ui_->tableData->item(row, col)) {
+                item->setText(text);
+            } else {
+                ui_->tableData->setItem(row, col, new QTableWidgetItem(text));
+            }
+        };
+        set(0, QString::number(packet.clientId));
+        set(1, PacketCodec::dataTypeToString(packet.payload.type));
+        set(2, packet.summary);
+        set(3, packet.receivedAt.toString(Qt::ISODate));
+    }
+
+    ui_->tableData->setUpdatesEnabled(true);
 }
 
 void MainWindow::onLogMessage(const QString &message) {
@@ -273,7 +319,7 @@ int MainWindow::rowForClient(ClientId id) const {
 void MainWindow::appendLog(const QString &message) {
     const QString line = QStringLiteral("[%1] %2")
             .arg(QDateTime::currentDateTime().toString("HH:mm:ss"), message);
-    ui_->textLog->append(line);
+    ui_->textLog->appendPlainText(line);
 }
 
 void MainWindow::setServerStatusLabel(bool running, quint16 port) {

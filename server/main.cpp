@@ -13,8 +13,9 @@ int main(int argc, char** argv) {
     qRegisterMetaType<ClientInfo>("ClientInfo");
     qRegisterMetaType<ClientStatus>("ClientStatus");
     qRegisterMetaType<Thresholds>("Thresholds");
-    qRegisterMetaType<IncomingPacket>("IncomingPacket");
     qRegisterMetaType<ServerSettings>("ServerSettings");
+    qRegisterMetaType<QVector<IncomingPacket>>("QVector<IncomingPacket>");
+    qRegisterMetaType<QStringList>("QStringList");
 
     const QString appDir = QCoreApplication::applicationDirPath();
 

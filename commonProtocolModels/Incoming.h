@@ -5,6 +5,7 @@
 #include <QMetaType>
 #include <QString>
 #include <variant>
+#include <QVector>
 
 #include "commonProtocolModels/ClientId.h"
 #include "commonProtocolModels/Measurements.h"
@@ -38,5 +39,7 @@ struct IncomingPacket {
 Q_DECLARE_METATYPE(IncomingPayload)
 
 Q_DECLARE_METATYPE(IncomingPacket)
+
+Q_DECLARE_METATYPE(QVector<IncomingPacket>)
 
 #endif //SERVER_INCOMING_H

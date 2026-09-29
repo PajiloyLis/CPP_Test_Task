@@ -2,6 +2,7 @@
 #define TEST_TASK_CPP_ISERVERCONTROLLER_H
 
 #include <QObject>
+#include <QVector>
 
 #include "configModels/ServerSettings.h"
 #include "commonProtocolModels/ClientId.h"
@@ -43,9 +44,11 @@ signals:
 
     void clientStatusChanged(ClientId id, ClientStatus status);
 
-    void packetReceived(IncomingPacket packet);
+    void packetsReceived(const QVector<IncomingPacket>& packets);
 
     void logMessage(const QString &message);
+
+    void logsReceived(const QStringList& lines);
 };
 
 #endif //TEST_TASK_CPP_ISERVERCONTROLLER_H

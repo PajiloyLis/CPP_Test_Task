@@ -18,6 +18,10 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextBlock>
+#include <QPlainTextEdit>
 
 #include "services/SettingsService.h"
 
@@ -53,9 +57,11 @@ public slots:
 
     void onClientStatusChanged(ClientId id, ClientStatus status);
 
-    void onPacketReceived(IncomingPacket packet);
-
     void onLogMessage(const QString &message);
+
+    void onPacketsReceived(const QVector<IncomingPacket>& packets);
+
+    void onLogsReceived(const QStringList& lines);
 
 private slots:
     void handleStartServerClicked();

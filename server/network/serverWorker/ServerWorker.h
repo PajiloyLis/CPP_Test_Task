@@ -3,6 +3,9 @@
 
 #include <QHash>
 #include <QObject>
+#include <QVector>
+#include <QTimer>
+#include <QStringList>
 
 #include "configModels/ServerSettings.h"
 #include "commonProtocolModels/ClientId.h"
@@ -24,7 +27,7 @@ public:
     ~ServerWorker() override;
 
 public slots:
-    void start(const ServerSettings& settings);
+    void start(const ServerSettings &settings);
 
     void stop();
 
@@ -49,9 +52,9 @@ signals:
 
     void clientStatusChanged(ClientId id, ClientStatus status);
 
-    void packetReceived(IncomingPacket packet);
+    void packetsReceived(const QVector<IncomingPacket> &packets);
 
-    void logMessage(const QString &message);
+    void logsReceived(const QStringList &lines);
 
 private slots:
     void onNewConnection();
@@ -62,6 +65,10 @@ private slots:
 
     void onSessionError(ClientId id, const QString &message);
 
+    void flushBatch();
+
+    void flushLogs();
+
 private:
     void evaluateThresholds(ClientSession *session, const IncomingPayload &payload);
 
@@ -71,6 +78,17 @@ private:
 
     void cleanupSession(ClientId id);
 
+    void enqueueLog(const QString &message);
+
+    QHash<ClientId, qint64> lastAlertMs_;
+    static constexpr qint64 kAlertCooldownMs = 1000;
+    QStringList pendingLogs_;
+    QTimer *logBatchTimer_ = nullptr;
+    static constexpr int kLogBatchIntervalMs = 200;
+    QVector<IncomingPacket> pendingPackets_;
+    QTimer *batchTimer_ = nullptr;
+    static constexpr int kBatchIntervalMs = 100;
+    static constexpr int kMaxBatchSize = 500;
     QTcpServer *server_ = nullptr;
     QHash<ClientId, ClientSession *> sessions_;
     ClientId nextId_ = 1;

@@ -12,7 +12,6 @@ ServerController::ServerController(QObject *parent)
 
     connect(thread_, &QThread::finished, worker_, &QObject::deleteLater);
 
-    // Ретрансляция сигналов worker -> интерфейс.
     connect(worker_, &ServerWorker::serverStarted,
             this, &IServerController::serverStarted);
     connect(worker_, &ServerWorker::serverStopped,
@@ -26,11 +25,11 @@ ServerController::ServerController(QObject *parent)
             this, &IServerController::clientDisconnected);
     connect(worker_, &ServerWorker::clientStatusChanged,
             this, &IServerController::clientStatusChanged);
+    connect(worker_, &ServerWorker::logsReceived,
+        this,    &IServerController::logsReceived);
 
-    connect(worker_, &ServerWorker::packetReceived,
-            this, &IServerController::packetReceived);
-    connect(worker_, &ServerWorker::logMessage,
-            this, &IServerController::logMessage);
+    connect(worker_, &ServerWorker::packetsReceived,
+            this, &IServerController::packetsReceived);
 
     thread_->start();
 }
@@ -38,20 +37,12 @@ ServerController::ServerController(QObject *parent)
 ServerController::~ServerController() {
     if (!worker_) return;
 
-    // Просим worker корректно остановиться и ждём выполнения.
-    // BlockingQueuedConnection безопасен: мы в GUI-потоке, worker — в thread_.
     QMetaObject::invokeMethod(worker_, &ServerWorker::stop,
                               Qt::BlockingQueuedConnection);
 
     thread_->quit();
     thread_->wait();
-    // thread_ удалится как дочерний QObject этого объекта.
-    // worker_ удалится по finished → deleteLater.
 }
-
-// ---------------------------------------------------------------------------
-// IServerController implementation
-// ---------------------------------------------------------------------------
 
 void ServerController::startServer(const ServerSettings& s) {
         auto* w = worker_;
