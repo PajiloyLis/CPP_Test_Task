@@ -16,7 +16,7 @@ public:
 
     ~ServerController() override;
 
-    void startServer(const ServerSettings& settings) override;
+    void startServer(const ServerSettings &settings) override;
 
     void stopServer() override;
 

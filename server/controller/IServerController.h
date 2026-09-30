@@ -16,7 +16,7 @@ public:
 
     ~IServerController() override = default;
 
-    virtual void startServer(const ServerSettings& settings) = 0;
+    virtual void startServer(const ServerSettings &settings) = 0;
 
     virtual void stopServer() = 0;
 
@@ -41,11 +41,11 @@ signals:
 
     void clientStatusChanged(ClientId id, ClientStatus status);
 
-    void packetsReceived(const QVector<IncomingPacket>& packets);
+    void packetsReceived(const QVector<IncomingPacket> &packets);
 
     void logMessage(const QString &message);
 
-    void logsReceived(const QStringList& lines);
+    void logsReceived(const QStringList &lines);
 };
 
 #endif //TEST_TASK_CPP_ISERVERCONTROLLER_H

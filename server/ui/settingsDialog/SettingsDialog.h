@@ -44,7 +44,6 @@ private:
     void clearHighlights();
 
     Ui::SettingsDialog *ui_ = nullptr;
-    Thresholds initial_;
 };
 
 #endif //SERVER_SETTINGSDIALOG_H

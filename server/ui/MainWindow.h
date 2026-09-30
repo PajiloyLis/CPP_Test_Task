@@ -3,10 +3,8 @@
 
 #include "controller/IServerController.h"
 #include "commonProtocolModels/Incoming.h"
-#include "commonProtocolModels/packetCodec/PacketCodec.h"
 #include "services/SettingsService.h"
 
-#include <QDateTime>
 #include <QMainWindow>
 #include <QHash>
 #include <QCoreApplication>
@@ -47,9 +45,9 @@ public slots:
 
     void onLogMessage(const QString &message);
 
-    void onPacketsReceived(const QVector<IncomingPacket>& packets);
+    void onPacketsReceived(const QVector<IncomingPacket> &packets);
 
-    void onLogsReceived(const QStringList& lines);
+    void onLogsReceived(const QStringList &lines);
 
 private slots:
     void handleStartServerClicked();
@@ -83,7 +81,8 @@ private:
 
     SettingsService *settings_ = nullptr;
     Ui::MainWindow *ui_ = nullptr;
-    IServerController *controller_ = nullptr; // не владеет
+    IServerController *controller_ = nullptr;
+    // Для быстрого обновления данных о клиенте
     QHash<ClientId, int> clientRow_;
 };
 

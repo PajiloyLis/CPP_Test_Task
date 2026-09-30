@@ -9,12 +9,13 @@
 
 SettingsDialog::SettingsDialog(const Thresholds &initial, QWidget *parent)
     : QDialog(parent),
-      ui_(new Ui::SettingsDialog),
-      initial_(initial) {
+      ui_(new Ui::SettingsDialog) {
     ui_->setupUi(this);
 
-    loadIntoFields(initial_);
+    loadIntoFields(initial);
 
+    disconnect(ui_->buttonBox, &QDialogButtonBox::accepted,
+               this, &QDialog::accept);
     connect(ui_->buttonBox, &QDialogButtonBox::accepted,
             this, &SettingsDialog::onAccepted);
     connect(ui_->buttonBox, &QDialogButtonBox::rejected,
@@ -66,6 +67,7 @@ Thresholds SettingsDialog::readFromFields() const {
     return t;
 }
 
+// Сброс подсветки невалидного поля, при исправлении данных
 void SettingsDialog::onAnyFieldChanged() {
     clearHighlights();
 }
@@ -108,10 +110,13 @@ void SettingsDialog::onImportFromFile() {
     loadIntoFields(*parsed);
 }
 
+// Повторная проверка данных в QDialogButtonBox
+// на случай возможной смены источника данных
 bool SettingsDialog::validateAndHighlight() {
     clearHighlights();
     bool ok = true;
 
+    // Быстрая смена стиля для невалидного поля
     auto mark = [](QWidget *w) {
         w->setStyleSheet(QStringLiteral(
             "border: 1px solid #d33; border-radius: 2px;"));

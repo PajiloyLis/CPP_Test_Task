@@ -2,12 +2,14 @@
 #include "ui/ui_MainWindow.h"
 #include "domainModels/Thresholds.h"
 #include "ui/settingsDialog/SettingsDialog.h"
+#include "commonProtocolModels/packetCodec/PacketCodec.h"
 
 
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextBlock>
+
 
 MainWindow::MainWindow(IServerController *controller,
                        SettingsService *settings,
@@ -40,12 +42,12 @@ void MainWindow::setupUi() {
     ui_->tableClients->horizontalHeader()
             ->setStretchLastSection(true);
 
-    // ui_->tableData->horizontalHeader()
-    //         ->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui_->tableData->horizontalHeader()
             ->setSectionResizeMode(QHeaderView::Interactive);
     ui_->tableData->horizontalHeader()->setStretchLastSection(true);
 
+    // Настройка QPalinTextEdit для быстрой вставки логов
+    // и снижения утилизации процессора
     ui_->textLog->setReadOnly(true);
     ui_->textLog->setMaximumBlockCount(1000);
     ui_->textLog->setUndoRedoEnabled(false);
@@ -108,12 +110,14 @@ void MainWindow::connectToController() {
 void MainWindow::onLogsReceived(const QStringList &lines) {
     if (lines.isEmpty()) return;
 
+    // Сборка батча сообщений в одну строку
+    // для одного добавления в QPlainTextEdit
     QString block;
     block.reserve(lines.size() * 64);
 
     const QString ts = QDateTime::currentDateTime().toString("HH:mm:ss");
 
-    for (const auto &line : lines) {
+    for (const auto &line: lines) {
         block += QLatin1Char('[');
         block += ts;
         block += QLatin1String("] ");
@@ -221,6 +225,11 @@ void MainWindow::onServerStopped() {
     ui_->btnStopServer->setEnabled(false);
     ui_->btnStartClients->setEnabled(false);
     ui_->btnStopClients->setEnabled(false);
+
+    ui_->tableClients->setRowCount(0);
+    ui_->tableData->setRowCount(0);
+    clientRow_.clear();
+
     appendLog(QStringLiteral("Server stopped."));
 }
 
@@ -282,6 +291,7 @@ void MainWindow::onClientStatusChanged(ClientId id, ClientStatus status) {
 void MainWindow::onPacketsReceived(const QVector<IncomingPacket> &packets) {
     if (packets.isEmpty()) return;
 
+    // Батчевая вставка строк с полученными данными в таблицу
     constexpr int kMaxRows = 1000;
     const int incoming = packets.size();
 

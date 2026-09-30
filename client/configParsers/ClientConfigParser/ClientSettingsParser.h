@@ -7,11 +7,9 @@
 #include <QJsonValue>
 
 namespace ClientConfigJson {
+    QJsonObject toJson(const ClientSettings &c);
 
-    QJsonObject toJson(const ClientSettings& c);
-
-    std::optional<ClientSettings> fromJson(const QByteArray& data);
-
+    std::optional<ClientSettings> fromJson(const QByteArray &data);
 }
 
 #endif //TESTTASK_CLIENTCONFIGPARSER_H

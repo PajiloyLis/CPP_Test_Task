@@ -6,8 +6,10 @@
 
 class LineBuffer {
 public:
-    void append(const QByteArray& chunk);
+    void append(const QByteArray &chunk);
+
     std::vector<QByteArray> takeCompleteLines();
+
     void clear() { buffer_.clear(); }
 
 private:

@@ -19,7 +19,8 @@ ServerWorker::ServerWorker(QObject *parent) : QObject(parent) {
 }
 
 ServerWorker::~ServerWorker() {
-    qDeleteAll(sessions_);
+    // Объекты ClientSession удаляются автоматически
+    // поскольку являются наследниками QObject
     sessions_.clear();
 }
 
@@ -31,7 +32,10 @@ void ServerWorker::flushLogs() {
 
 void ServerWorker::enqueueLog(const QString &message) {
     pendingLogs_.append(message);
-    if (!logBatchTimer_->isActive()) {
+    if (pendingLogs_.size() >= kMaxLogBatchSize) {
+        logBatchTimer_->stop();
+        flushLogs();
+    } else if (!logBatchTimer_->isActive()) {
         logBatchTimer_->start(kLogBatchIntervalMs);
     }
 }
@@ -41,7 +45,7 @@ void ServerWorker::start(const ServerSettings &s) {
         enqueueLog(QStringLiteral("Server already running."));
         return;
     }
-
+    nextId_ = 1;
     QHostAddress host(s.bindAddress);
     if (host.isNull()) {
         emit fatalError(QStringLiteral("Invalid bind address: %1")
@@ -92,8 +96,8 @@ void ServerWorker::stop() {
     server_->deleteLater();
     server_ = nullptr;
 
-    emit serverStopped();
     enqueueLog(QStringLiteral("Server stopped."));
+    emit serverStopped();
 }
 
 void ServerWorker::broadcastStart() {

@@ -1,9 +1,7 @@
 #ifndef SERVER_SETTINGSSERVICE_H
 #define SERVER_SETTINGSSERVICE_H
 
-#include <QFile>
 
-#include "configParsers/serverConfigParser/ServerSettingsParser.h"
 #include "configModels/ServerSettings.h"
 #include "domainModels/Thresholds.h"
 

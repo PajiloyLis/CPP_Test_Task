@@ -4,10 +4,13 @@
 #include <QTcpSocket>
 #include <utility>
 
+// Читает, парсит и отправляет JSON данные через QTCPSocket
+// Посылает сигнал packetReceived
 ClientSession::ClientSession(QTcpSocket *socket, ClientInfo info, QObject *parent)
     : QObject(parent),
       socket_(socket),
       info_(std::move(info)) {
+    // Сессия владеет сокетом
     socket_->setParent(this);
 
     connect(socket_, &QTcpSocket::readyRead,
@@ -27,6 +30,7 @@ void ClientSession::sendMessage(const OutcomingMessage &msg) {
 
 void ClientSession::close() {
     if (socket_) {
+        // Дожидаемся закрытия, чтобы отправить данные
         socket_->disconnectFromHost();
     }
 }

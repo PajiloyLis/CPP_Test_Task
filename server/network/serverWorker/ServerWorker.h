@@ -15,6 +15,9 @@
 class QTcpServer;
 class ClientSession;
 
+// Обрабатывает принимаемые подключения,
+// держит словарь сессий, обрабатывает входящие пакеты,
+// рассылает команды и применяет пороги
 class ServerWorker : public QObject {
     Q_OBJECT
 
@@ -82,6 +85,7 @@ private:
     QStringList pendingLogs_;
     QTimer *logBatchTimer_ = nullptr;
     static constexpr int kLogBatchIntervalMs = 200;
+    static constexpr int kMaxLogBatchSize = 200;
     QVector<IncomingPacket> pendingPackets_;
     QTimer *batchTimer_ = nullptr;
     static constexpr int kBatchIntervalMs = 100;

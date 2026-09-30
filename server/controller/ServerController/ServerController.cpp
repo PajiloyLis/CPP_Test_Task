@@ -26,7 +26,7 @@ ServerController::ServerController(QObject *parent)
     connect(worker_, &ServerWorker::clientStatusChanged,
             this, &IServerController::clientStatusChanged);
     connect(worker_, &ServerWorker::logsReceived,
-        this,    &IServerController::logsReceived);
+            this, &IServerController::logsReceived);
 
     connect(worker_, &ServerWorker::packetsReceived,
             this, &IServerController::packetsReceived);
@@ -44,12 +44,12 @@ ServerController::~ServerController() {
     thread_->wait();
 }
 
-void ServerController::startServer(const ServerSettings& s) {
-        auto* w = worker_;
-        QMetaObject::invokeMethod(
-            w,
-            [w, s] { w->start(s); },
-            Qt::QueuedConnection);
+void ServerController::startServer(const ServerSettings &s) {
+    auto *w = worker_;
+    QMetaObject::invokeMethod(
+        w,
+        [w, s] { w->start(s); },
+        Qt::QueuedConnection);
 }
 
 void ServerController::stopServer() {

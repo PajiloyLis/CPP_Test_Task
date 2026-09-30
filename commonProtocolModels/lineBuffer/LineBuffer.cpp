@@ -1,6 +1,6 @@
 #include "commonProtocolModels/lineBuffer/LineBuffer.h"
 
-void LineBuffer::append(const QByteArray& chunk) {
+void LineBuffer::append(const QByteArray &chunk) {
     buffer_.append(chunk);
 }
 

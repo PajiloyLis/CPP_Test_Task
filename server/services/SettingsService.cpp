@@ -1,16 +1,20 @@
 #include "SettingsService.h"
 #include "configParsers/thresholdsConfigParser/ThresholdsParser.h"
+#include "configParsers/serverConfigParser/ServerSettingsParser.h"
 
 #include <QDir>
 #include <QFileInfo>
 #include <QJsonDocument>
 
+// Читает и пишет настройки пороговых значений и настройки приложения
 SettingsService::SettingsService(QString sPath, QString tPath, QObject *parent)
     : QObject(parent),
       serverConfigPath_(std::move(sPath)),
       thresholdsPath_(std::move(tPath)) {
 }
 
+// Посылает сигнал всегда, независимо от того,
+// совпадают ли новые данные с предыдущими или нет
 void SettingsService::load() {
     if (QFile f(serverConfigPath_); f.exists() && f.open(QIODevice::ReadOnly)) {
         if (auto s = ServerSettingsJson::fromJson(f.readAll())) {
@@ -39,6 +43,8 @@ void SettingsService::setThresholds(const Thresholds &t) {
 }
 
 namespace {
+    // Возвращает пустую строку в случае успеха
+    // В случае отсутствия директории создает ее
     QString writeJson(const QString &path, const QJsonObject &root) {
         const QFileInfo info(path);
         const QDir dir = info.absoluteDir();

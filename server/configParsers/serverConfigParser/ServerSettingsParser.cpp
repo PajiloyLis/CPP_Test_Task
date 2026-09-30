@@ -2,14 +2,14 @@
 
 #include <QJsonParseError>
 
-QJsonObject ServerSettingsJson::toJson(const ServerSettings& s) {
+QJsonObject ServerSettingsJson::toJson(const ServerSettings &s) {
     return QJsonObject{
-            {"port",         s.port},
-            {"bind_address", s.bindAddress},
-        };
+        {"port", s.port},
+        {"bind_address", s.bindAddress},
+    };
 }
 
-std::optional<ServerSettings> ServerSettingsJson::fromJson(const QByteArray& data) {
+std::optional<ServerSettings> ServerSettingsJson::fromJson(const QByteArray &data) {
     QJsonParseError err{};
     const QJsonDocument doc = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject()) {
