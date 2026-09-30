@@ -1,5 +1,5 @@
 **/cmake-build-debug/**
 **/.idea/**
 /Тестовое задание Разработка.txt
-*.sh
 /client-logs/
+build/**
